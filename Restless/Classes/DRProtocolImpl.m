@@ -331,7 +331,12 @@ typedef void (^DRCallback)(id result, NSURLResponse *response, NSError* error);
     if (!task) return request;
     
     // Hack to access private instance variable that points to the NSURLSession until Apple provides a public method
-    NSURLSession* session = [task valueForKey:@"_localSession"];
+    NSURLSession *session;
+    if ([UIDevice currentDevice].systemVersion.floatValue < 13) {
+        session = [task valueForKey:@"_localSession"];
+    } else {
+        session = [task valueForKey:@"session"];
+    }
     if (![session isKindOfClass:[NSURLSession class]]) return request;
     
     NSURLSessionConfiguration* config = session.configuration;
